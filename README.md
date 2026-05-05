@@ -47,6 +47,9 @@ A production-ready Chrome Extension that summarizes web pages using AI. Extracts
 ├── popup.css                     # Popup styling (light/dark mode)
 ├── content.js                    # Content script for page interaction
 ├── background.js                 # Service worker for API calls
+├── vercel.json                   # Vercel deployment configuration
+├── api/
+│   └── summarize.js             # Backend Proxy (Serverless Function)
 ├── utils/
 │   ├── messaging.js             # Chrome messaging API wrapper
 │   └── storage.js               # Chrome storage API wrapper
@@ -183,11 +186,11 @@ Download or clone this repository to your local machine.
 - Prevents duplicate API calls
 - Provides cache statistics
 
-#### **utils/extractor.js** - Text Processing
-- Reading time calculation
-- Key phrase extraction
-- HTML sanitization
-- Text cleaning utilities
+#### **api/summarize.js** - Backend Proxy (Vercel)
+- Securely handles the Groq AI API key
+- Processes content on the server side
+- Implements CORS for the extension
+- Dynamically selects the best available AI model
 
 ---
 
@@ -214,40 +217,36 @@ AI API (OpenAI, Anthropic, etc.)
 ### Real Implementation Example
 
 ```javascript
-// In background.js (REAL PRODUCTION CODE)
-async callAISummarizationAPI(content, title) {
-  // Never store API key in extension!
-  // Always use a backend server with the key
-  
-  const response = await fetch('https://your-backend.com/api/summarize', {
+// In background.js
+async callAISummarizationAPI(content, title, options) {
+  const response = await fetch('https://page-summarizer-extension.vercel.app/api/summarize', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      // No Authorization header here!
     },
     body: JSON.stringify({
       content: content,
-      title: title
-      // Backend validates request and adds API key
+      title: title,
+      options: options
     })
   });
-
-  const result = await response.json();
-  return result.summary;
+  
+  const data = await response.json();
+  return data.summary;
 }
+```
 
-// Backend (your-backend.com) - Node.js example:
-app.post('/api/summarize', async (req, res) => {
-  const { content, title } = req.body;
-  
-  // API key stored as environment variable
-  const apiKey = process.env.OPENAI_API_KEY;
-  
-  const response = await openai.createChatCompletion({
-    model: 'gpt-4',
-    messages: [{
-      role: 'system',
-      content: 'Summarize the following article...'
+### 🌍 Deployment (Vercel)
+
+This project uses **Vercel Serverless Functions** to host the backend proxy.
+
+1. **Root Directory**: The `api/` folder contains the serverless function logic.
+2. **Environment Variables**: The `GROQ_API_KEY` is set in the Vercel project dashboard.
+3. **CORS**: The proxy is configured to allow requests specifically from Chrome extensions.
+
+---
+
+## 🔐 Security Architecture
     }, {
       role: 'user',
       content: content
