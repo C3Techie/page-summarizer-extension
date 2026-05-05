@@ -1,0 +1,14 @@
+# Extension local files
+.DS_Store
+Thumbs.db
+
+# Secrets
+.env
+.env.local
+.env.*.local
+
+# Project artifacts
+node_modules/
+dist/
+build/
+*.log
