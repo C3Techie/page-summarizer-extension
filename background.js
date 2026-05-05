@@ -53,7 +53,7 @@ class SummarizationEngine {
     console.log(' Calling Proxy API...');
 
     try {
-      const response = await fetch('https://page-summarizer-extension.vercel.app/backend-proxy/api/summarize', {
+      const response = await fetch('https://page-summarizer-extension.vercel.app/api/summarize', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
