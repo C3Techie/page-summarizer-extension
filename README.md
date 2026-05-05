@@ -274,6 +274,22 @@ app.post('/api/summarize', async (req, res) => {
 - No data sent to third parties
 - Minimal permissions requested
 
+### Trade-offs & Engineering Decisions
+
+When building this extension, several architectural trade-offs were made to balance usability, security, and performance:
+
+1. **Client-Side API Calls vs. Backend Proxy**:
+   - *Decision*: We allow the user to input their own Groq/Gemini API key directly into the extension for demonstration purposes.
+   - *Trade-off*: While this makes the extension completely serverless and free to host, it requires the user to trust the extension with their API key. In a true production environment, a backend proxy (as detailed above) would be used to hide the developer's API key, though this would incur server costs and latency.
+
+2. **Heuristic Content Extraction vs. Advanced DOM Parsing**:
+   - *Decision*: We use a lightweight heuristic algorithm (`content.js`) to find the longest paragraphs instead of a heavy library like Mozilla's Readability.js.
+   - *Trade-off*: This keeps the extension extremely lightweight and fast, but it might struggle with highly unconventional webpage layouts or single-page applications heavily reliant on shadow DOMs.
+
+3. **Context Window Truncation vs. Chunking**:
+   - *Decision*: We slice the article content to the first ~3,000 characters before sending it to the AI.
+   - *Trade-off*: This guarantees we never hit token limit errors (especially with smaller, faster models), but we lose the context of the end of very long articles. Implementing a chunking or map-reduce algorithm would solve this but significantly increase API costs and summarization time.
+
 ---
 
 ## ⚙️ Configuration & Customization
