@@ -21,15 +21,10 @@ class PopupManager {
     this.loadingState = document.getElementById('loadingState');
     this.resultsState = document.getElementById('resultsState');
     this.errorState = document.getElementById('errorState');
-    this.settingsPanel = document.getElementById('settingsPanel');
 
     // UI Elements
     this.pageTitle = document.getElementById('pageTitle');
     this.summarizeBtn = document.getElementById('summarizeBtn');
-    this.settingsBtn = document.getElementById('settingsBtn');
-    this.saveSettingsBtn = document.getElementById('saveSettingsBtn');
-    this.closeSettingsBtn = document.getElementById('closeSettingsBtn');
-    this.apiKeyInput = document.getElementById('apiKey');
     this.shortSummaryCheckbox = document.getElementById('shortSummary');
     this.copyBtn = document.getElementById('copyBtn');
     this.highlightBtn = document.getElementById('highlightBtn');
@@ -47,11 +42,6 @@ class PopupManager {
     this.highlightBtn.addEventListener('click', () => this.handleHighlight());
     this.resetBtn.addEventListener('click', () => this.handleReset());
     this.retryBtn.addEventListener('click', () => this.handleSummarize());
-    
-    // Settings events
-    this.settingsBtn.addEventListener('click', () => this.setState('settings'));
-    this.closeSettingsBtn.addEventListener('click', () => this.setState('initial'));
-    this.saveSettingsBtn.addEventListener('click', () => this.handleSaveSettings());
   }
 
   async displayPageInfo() {
@@ -65,9 +55,6 @@ class PopupManager {
       if (cached) {
         this.displayResults(cached);
       }
-
-      // Load API key
-      this.loadSettings();
     } catch (error) {
       console.error(' Error getting page info:', error);
       this.showError('Failed to load page information');
@@ -231,7 +218,6 @@ class PopupManager {
     this.loadingState.classList.add('hidden');
     this.resultsState.classList.add('hidden');
     this.errorState.classList.add('hidden');
-    this.settingsPanel.classList.add('hidden');
 
     // Show selected state
     switch (state) {
@@ -247,43 +233,10 @@ class PopupManager {
       case 'error':
         this.errorState.classList.remove('hidden');
         break;
-      case 'settings':
-        this.settingsPanel.classList.remove('hidden');
-        break;
     }
   }
 
-  async loadSettings() {
-    try {
-      const result = await chrome.storage.local.get(['groq_api_key']);
-      if (result.groq_api_key) {
-        this.apiKeyInput.value = result.groq_api_key;
-      }
-    } catch (error) {
-      console.error(' Failed to load settings:', error);
-    }
-  }
 
-  async handleSaveSettings() {
-    try {
-      const key = this.apiKeyInput.value.trim();
-      await chrome.storage.local.set({ 'groq_api_key': key });
-      
-      // Visual feedback
-      const originalText = this.saveSettingsBtn.textContent;
-      this.saveSettingsBtn.textContent = '✅ Saved!';
-      this.saveSettingsBtn.disabled = true;
-      
-      setTimeout(() => {
-        this.saveSettingsBtn.textContent = originalText;
-        this.saveSettingsBtn.disabled = false;
-        this.setState('initial');
-      }, 1000);
-    } catch (error) {
-      console.error(' Failed to save settings:', error);
-      alert('Failed to save settings');
-    }
-  }
 }
 
 // Initialize popup when DOM is ready
