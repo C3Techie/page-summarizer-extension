@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Page Summarizer</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-left">
+        <img src="icons/icon-48.png" alt="Logo" class="header-logo">
+        <div class="header-content">
+          <h1 class="title">Page Summarizer</h1>
+          <p class="subtitle" id="pageTitle">Loading page title...</p>
+        </div>
+      </div>
+      <button id="settingsBtn" class="icon-btn" title="Settings">
+        <span class="btn-icon">⚙️</span>
+      </button>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Settings Panel (Hidden by default) -->
+      <div id="settingsPanel" class="state-section hidden">
+        <h2 class="section-title">Settings</h2>
+        <div class="settings-group">
+          <label for="apiKey">Groq API Key</label>
+          <input type="password" id="apiKey" placeholder="gsk_..." class="input-field">
+          <p class="help-text">Get your free key at <a href="https://console.groq.com/keys" target="_blank" style="color: var(--primary);">console.groq.com</a></p>
+        </div>
+        <div class="action-buttons">
+          <button id="saveSettingsBtn" class="btn btn-primary">Save Settings</button>
+          <button id="closeSettingsBtn" class="btn btn-secondary">Back</button>
+        </div>
+      </div>
+
+      <!-- Initial State: Action Button -->
+      <div id="initialState" class="state-section">
+        <div class="options-group">
+          <label class="checkbox-label">
+            <input type="checkbox" id="shortSummary">
+            <span>Summarize in 3 bullet points</span>
+          </label>
+        </div>
+        <button id="summarizeBtn" class="btn btn-primary">
+          <span class="btn-icon">✨</span>
+          Summarize This Page
+        </button>
+        <p class="info-text">Click the button above to generate an AI-powered summary of this webpage.</p>
+      </div>
+
+      <!-- Loading State -->
+      <div id="loadingState" class="state-section hidden">
+        <div class="spinner"></div>
+        <p class="loading-text">Analyzing page content...</p>
+        <p class="loading-subtext">This may take a few seconds</p>
+      </div>
+
+      <!-- Results State -->
+      <div id="resultsState" class="state-section hidden">
+        <!-- Reading Time -->
+        <div class="info-box">
+          <span class="info-label">📖 Reading Time:</span>
+          <span id="readingTime" class="info-value">--</span>
+        </div>
+
+        <!-- Summary Section -->
+        <section class="summary-section">
+          <h2 class="section-title">Summary</h2>
+          <ul id="summaryList" class="summary-list">
+            <!-- Populated by JS -->
+          </ul>
+        </section>
+
+        <!-- Key Insights Section -->
+        <section class="insights-section">
+          <h2 class="section-title">Key Insights</h2>
+          <div id="insights" class="insights-box">
+            <!-- Populated by JS -->
+          </div>
+        </section>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+          <button id="copyBtn" class="btn btn-secondary">
+            <span class="btn-icon">📋</span>
+            Copy Summary
+          </button>
+          <button id="highlightBtn" class="btn btn-secondary">
+            <span class="btn-icon">🎨</span>
+            Highlight Text
+          </button>
+          <button id="resetBtn" class="btn btn-secondary">
+            <span class="btn-icon">🔄</span>
+            New Summary
+          </button>
+        </div>
+      </div>
+
+      <!-- Error State -->
+      <div id="errorState" class="state-section hidden">
+        <div class="error-box">
+          <p class="error-title">⚠️ Unable to Summarize</p>
+          <p id="errorMessage" class="error-message">An error occurred. Please try again.</p>
+          <button id="retryBtn" class="btn btn-secondary">
+            <span class="btn-icon">🔄</span>
+            Try Again
+          </button>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <p class="footer-text">Powered by AI • Privacy first</p>
+    </footer>
+  </div>
+
+  <script src="utils/messaging.js"></script>
+  <script src="utils/storage.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>
