@@ -1,0 +1,11 @@
+{
+  "name": "page-summarizer-backend",
+  "version": "1.0.0",
+  "description": "Vercel proxy backend for the AI Page Summarizer",
+  "scripts": {
+    "start": "node api/summarize.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5"
+  }
+}
